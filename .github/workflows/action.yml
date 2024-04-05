@@ -29,7 +29,7 @@ jobs:
           pip install --upgrade google-api-python-client oauth2client
           pip install playwright
           python -m playwright install ${{ matrix.browser-channel }} --with-deps
-          pip install python-telegram-bot --upgrade
+          pip install pyTelegramBotAPI
 
       - name: Install ubuntu package
         run: |
