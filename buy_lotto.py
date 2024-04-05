@@ -16,8 +16,8 @@ USER_PW = sys.argv[2]
 COUNT = sys.argv[3]
 
 # 텔레그램 설정
-BOT_TOKEN = sys.argv[3]
-CHAT_ID = sys.argv[4]
+BOT_TOKEN = sys.argv[4]
+CHAT_ID = sys.argv[5]
 
 class BalanceError(Exception):
     def __init__(self, message="An error occurred", code=None):
@@ -44,8 +44,10 @@ async def send_message_async(text):
 
 
 def run(playwright: Playwright) -> None:
+    loop = asyncio.get_event_loop()  # 현재 실행 중인 이벤트 루프를 얻습니다.
+   
     print(f"{COUNT}개 자동 복권 구매 시작합니다!")
-    asyncio.run(send_message_async("{COUNT}개 자동 복권 구매 시작합니다!"))
+    loop.run_until_complete(send_message_async("{COUNT}개 자동 복권 구매 시작합니다!"))
     try:
         browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
         context = browser.new_context()
@@ -93,7 +95,7 @@ def run(playwright: Playwright) -> None:
         page.click('input[name="closeLayer"]')
         assert page.url == "https://el.dhlottery.co.kr/game/TotalGame.jsp?LottoId=LO40"
         print(f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
-        asyncio.run(send_message_async("{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView"))
+        loop.run_until_complete(send_message_async("{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView"))
 
 
         # 오늘 구매한 복권 결과
@@ -112,13 +114,13 @@ def run(playwright: Playwright) -> None:
         for result in page.query_selector_all("div.selected li"):
             result_msg += ", ".join(result.inner_text().split("\n")) + "\n"
         print(f"이번주 나의 행운의 번호는?!\n{result_msg}")
-        asyncio.run(send_message_async("이번주 나의 행운의 번호는?!\n{result_msg}"))
+        loop.run_until_complete(send_message_async("이번주 나의 행운의 번호는?!\n{result_msg}"))
     except BalanceError:
         print("BalanceError")
-        asyncio.run(send_message_async(BalanceError))
+        loop.run_until_complete(send_message_async(BalanceError))
     except Exception as exc:
         print(exc)
-        asyncio.run(send_message_async(exc))
+        loop.run_until_complete(send_message_async(exc))
     finally:
         # End of Selenium
         context.close()
