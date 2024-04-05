@@ -1,9 +1,9 @@
 name: Lotto Buy Bot (로또 구매봇)
 
-#on: [push]
 on:
   schedule:
-    - cron: "55 23 * * 5" # UST 기준의 크론. UST 23:55 는 KST 08:55
+    - cron: "50 23 * * 5" # UST 기준의 크론. UST 23:50 는 KST 08:50
+  workflow_dispatch:
 
 jobs:
   build:
@@ -41,4 +41,4 @@ jobs:
 
       - name: Run!
         run: |
-          python ./buy_lotto.py
+          python ./buy_lotto.py ${{secrets.USER_ID}} ${{secrets.USER_PW}}
