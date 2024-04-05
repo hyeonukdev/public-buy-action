@@ -68,6 +68,8 @@ def run(playwright: Playwright) -> None:
 
         page.goto(url="https://ol.dhlottery.co.kr/olotto/game/game645.do")
         # "비정상적인 방법으로 접속하였습니다. 정상적인 PC 환경에서 접속하여 주시기 바랍니다." 우회하기
+        # 아래코드는 action하면서필요하고 테스트일 땐 주석해야함.
+        page.locator("#popupLayerAlert").get_by_role("button", name="확인").click()
         page.click("text=자동번호발급")
 
         # 구매할 개수를 선택
