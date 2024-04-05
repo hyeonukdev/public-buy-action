@@ -2,11 +2,11 @@ import re
 import sys
 import time
 from datetime import datetime, timedelta
+import asyncio
+from telegram import Bot
 
 from requests import post, Response
 from playwright.sync_api import Playwright, sync_playwright
-
-RUN_FILE_NAME = sys.argv[0]
 
 # 동행복권 아이디와 패스워드를 설정
 USER_ID = sys.argv[1]
@@ -14,6 +14,10 @@ USER_PW = sys.argv[2]
 
 # 구매 개수를 설정
 COUNT = sys.argv[3]
+
+# 텔레그램 설정
+BOT_TOKEN = sys.argv[3]
+CHAT_ID = sys.argv[4]
 
 class BalanceError(Exception):
     def __init__(self, message="An error occurred", code=None):
@@ -24,18 +28,24 @@ class BalanceError(Exception):
     def __str__(self):
         return f"{self.message} - Code: {self.code}" if self.code else self.message
 
-
 def __get_now() -> datetime:
     now_utc = datetime.utcnow()
     korea_timezone = timedelta(hours=9)
     now_korea = now_utc + korea_timezone
     return now_korea
 
-
+async def send_message_async(text):
+    """
+    비동기적으로 Telegram 메세지를 보내는 함수
+    :param text: 보낼 메세지의 내용
+    """
+    bot = Bot(token=BOT_TOKEN)
+    await bot.send_message(chat_id=CHAT_ID, text=text)
 
 
 def run(playwright: Playwright) -> None:
     print(f"{COUNT}개 자동 복권 구매 시작합니다!")
+    asyncio.run(send_message_async('{COUNT}개 자동 복권 구매 시작합니다!)')
     try:
         browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
         context = browser.new_context()
@@ -82,9 +92,9 @@ def run(playwright: Playwright) -> None:
         )  # Click text=확인 취소 >> input[type="button"]
         page.click('input[name="closeLayer"]')
         assert page.url == "https://el.dhlottery.co.kr/game/TotalGame.jsp?LottoId=LO40"
-        print(
-            f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView"
-        )
+        print(f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
+        asyncio.run(send_message_async("{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView"))
+
 
         # 오늘 구매한 복권 결과
         now_date = __get_now().date().strftime("%Y%m%d")
@@ -102,10 +112,13 @@ def run(playwright: Playwright) -> None:
         for result in page.query_selector_all("div.selected li"):
             result_msg += ", ".join(result.inner_text().split("\n")) + "\n"
         print(f"이번주 나의 행운의 번호는?!\n{result_msg}")
+        asyncio.run(send_message_async("이번주 나의 행운의 번호는?!\n{result_msg}"))
     except BalanceError:
         print("BalanceError")
+        asyncio.run(send_message_async(BalanceError))
     except Exception as exc:
         print(exc)
+        asyncio.run(send_message_async(exc))
     finally:
         # End of Selenium
         context.close()

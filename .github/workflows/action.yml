@@ -29,6 +29,7 @@ jobs:
           pip install --upgrade google-api-python-client oauth2client
           pip install playwright
           python -m playwright install ${{ matrix.browser-channel }} --with-deps
+          pip install python-telegram-bot --upgrade
 
       - name: Install ubuntu package
         run: |
@@ -41,4 +42,4 @@ jobs:
 
       - name: Run!
         run: |
-          python ./buy_lotto.py ${{secrets.USER_ID}} ${{secrets.USER_PW}} ${{secrets.COUNT}}
+          python ./buy_lotto.py ${{secrets.USER_ID}} ${{secrets.USER_PW}} ${{secrets.COUNT}} ${{secrets.BOT_TOKEN}} ${{secrets.CHAT_ID}}
