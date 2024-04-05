@@ -37,7 +37,7 @@ def __get_now() -> datetime:
 def run(playwright: Playwright) -> None:
     print(f"{COUNT}개 자동 복권 구매 시작합니다!")
     try:
-        browser = playwright.chromium.launch(headless=False)  # chrome 브라우저를 실행
+        browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
         context = browser.new_context()
 
         page = context.new_page()
