@@ -13,7 +13,7 @@ USER_ID = sys.argv[1]
 USER_PW = sys.argv[2]
 
 # 구매 개수를 설정
-COUNT = 1
+COUNT = sys.argv[3]
 
 class BalanceError(Exception):
     def __init__(self, message="An error occurred", code=None):

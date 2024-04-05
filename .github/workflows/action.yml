@@ -41,4 +41,4 @@ jobs:
 
       - name: Run!
         run: |
-          python ./buy_lotto.py ${{secrets.USER_ID}} ${{secrets.USER_PW}}
+          python ./buy_lotto.py ${{secrets.USER_ID}} ${{secrets.USER_PW}} ${{secrets.COUNT}}
