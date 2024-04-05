@@ -2,7 +2,6 @@ import re
 import sys
 import time
 from datetime import datetime, timedelta
-import asyncio
 import telebot
 
 from requests import post, Response
@@ -41,12 +40,12 @@ def send_message(text):
 
 
 def run(playwright: Playwright) -> None:
-    loop = asyncio.get_event_loop()  # 현재 실행 중인 이벤트 루프를 얻습니다.
 
     print(f"{COUNT}개 자동 복권 구매 시작합니다!")
-    send_message("{COUNT}개 자동 복권 구매 시작합니다!")
+    send_message(f"{COUNT}개 자동 복권 구매 시작합니다!")
+    
     try:
-        browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
+        browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행, False인 경우 테스트 실행
         context = browser.new_context()
 
         page = context.new_page()
@@ -69,7 +68,9 @@ def run(playwright: Playwright) -> None:
         money_info: str = money_info.split("\n")
         user_name = money_info[0]
         money_info: int = int(money_info[2].replace(",", "").replace("원", ""))
+
         print(f"로그인 사용자: {user_name}, 예치금: {money_info}")
+        send_message(f"로그인 사용자: {user_name}, 예치금: {money_info}")
 
         # 예치금 잔액 부족 미리 exception
         if 1000 * int(COUNT) > money_info:
@@ -91,9 +92,9 @@ def run(playwright: Playwright) -> None:
         )  # Click text=확인 취소 >> input[type="button"]
         page.click('input[name="closeLayer"]')
         assert page.url == "https://el.dhlottery.co.kr/game/TotalGame.jsp?LottoId=LO40"
-        print(f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
-        send_message("{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
 
+        print(f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
+        send_message(f"{COUNT}개 복권 구매 성공! \n자세하게 확인하기: https://dhlottery.co.kr/myPage.do?method=notScratchListView")
 
         # 오늘 구매한 복권 결과
         now_date = __get_now().date().strftime("%Y%m%d")
@@ -110,14 +111,18 @@ def run(playwright: Playwright) -> None:
         result_msg = ""
         for result in page.query_selector_all("div.selected li"):
             result_msg += ", ".join(result.inner_text().split("\n")) + "\n"
+
         print(f"이번주 나의 행운의 번호는?!\n{result_msg}")
-        send_message("이번주 나의 행운의 번호는?!\n{result_msg}")
+        send_message(f"이번주 나의 행운의 번호는?!\n{result_msg}")
+
     except BalanceError:
         print("BalanceError")
         send_message(BalanceError)
+
     except Exception as exc:
         print(exc)
         send_message(exc)
+
     finally:
         # End of Selenium
         context.close()
