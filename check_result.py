@@ -3,6 +3,7 @@ import sys
 import time
 from datetime import datetime, timedelta
 from typing import List
+import telebot
 
 from requests import post, Response
 from playwright.sync_api import Playwright, sync_playwright
@@ -41,7 +42,7 @@ def send_message(text):
 
 
 def run(playwright: Playwright) -> None:
-    send_message(f"복권 결과 확인을 시작합니다!")
+    send_message("복권 결과 확인을 시작합니다!")
     try:
         browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
         context = browser.new_context()
