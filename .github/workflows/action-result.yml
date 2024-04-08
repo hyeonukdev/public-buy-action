@@ -41,4 +41,4 @@ jobs:
 
       - name: Run for checking the result of Lotto!
         run: |
-        python ./check_result.py ${{secrets.USER_ID}} ${{secrets.USER_PW}} ${{secrets.BOT_TOKEN}} ${{secrets.CHAT_ID}}
+          python ./check_result.py ${{secrets.USER_ID}} ${{secrets.USER_PW}} ${{secrets.BOT_TOKEN}} ${{secrets.CHAT_ID}}
