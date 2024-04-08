@@ -43,7 +43,7 @@ def send_message(text):
 def run(playwright: Playwright) -> None:
     send_message(f"복권 결과 확인을 시작합니다!")
     try:
-        browser = playwright.chromium.launch(headless=False)  # chrome 브라우저를 실행
+        browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행
         context = browser.new_context()
 
         page = context.new_page()
