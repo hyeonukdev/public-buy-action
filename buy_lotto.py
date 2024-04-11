@@ -4,7 +4,6 @@ import time
 from datetime import datetime, timedelta
 import telebot
 
-from requests import post, Response
 from playwright.sync_api import Playwright, sync_playwright
 
 # 동행복권 아이디와 패스워드를 설정
@@ -43,7 +42,7 @@ def run(playwright: Playwright) -> None:
 
     print(f"{COUNT}개 자동 복권 구매 시작합니다!")
     send_message(f"{COUNT}개 자동 복권 구매 시작합니다!")
-    
+
     try:
         browser = playwright.chromium.launch(headless=True)  # chrome 브라우저를 실행, False인 경우 테스트 실행
         context = browser.new_context()

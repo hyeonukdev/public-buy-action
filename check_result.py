@@ -5,10 +5,7 @@ from datetime import datetime, timedelta
 from typing import List
 import telebot
 
-from requests import post, Response
 from playwright.sync_api import Playwright, sync_playwright
-
-RUN_FILE_NAME = sys.argv[0]
 
 # 동행복권 아이디와 패스워드를 설정
 USER_ID = sys.argv[1]
@@ -116,14 +113,15 @@ def run(playwright: Playwright) -> None:
         print(f"> 이번주 나의 행운의 번호 결과는?!?!?!\n{result_msg}")
         send_message(f"> 이번주 나의 행운의 번호 결과는?!?!?!\n{result_msg}")
 
+    except Exception as exc:
+        print(exc)
+        send_message(exc)
+
+    finally:
         # End of Selenium
         context.close()
         browser.close()
-    except Exception as exc:
-        send_message(exc)
-        context.close()
-        browser.close()
-        raise exc
+
 
 
 with sync_playwright() as playwright:
